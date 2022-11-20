@@ -69,10 +69,14 @@ int main(int argc, char** argv)
     std::fill(b.noisy_symbols.begin(), b.noisy_symbols.end(), 0.0);
     std::fill(b.sigma.begin(), b.sigma.end(), 0.5);
 
+    size_t total_frames = 0;
+    size_t failed_frames = 0;
+
     while (fread(&b.noisy_symbols[0],
                  (p.N - p.puncturing) * sizeof(float),
                  1,
                  input_frames) == 1) {
+        ++total_frames;
         for (int j = 0; j < p.N - p.puncturing; ++j) {
             b.noisy_symbols[j] = -b.noisy_symbols[j];
         }
@@ -80,6 +84,7 @@ int main(int argc, char** argv)
         int ret = m.decoder->decode_siho(b.LLRs, b.dec_bits);
         if (ret) {
             std::cerr << "failed to decode frame" << std::endl;
+            ++failed_frames;
             continue;
         }
         for (int j = 0; j < p.K; ++j) {
@@ -93,6 +98,10 @@ int main(int argc, char** argv)
 
     fclose(input_frames);
     fclose(output_frames);
+
+    std::cout << "decoded " << (total_frames - failed_frames) << "/" << total_frames
+              << " frames (" << failed_frames << " failed)" << std::endl;
+
     return 0;
 }
 
