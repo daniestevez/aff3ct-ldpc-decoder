@@ -70,3 +70,19 @@ $ devenv /build Release my_project.sln
 ```
 
 The compiled binary is in `build/bin/aff3ct-ldpc-decoder`.
+
+## Usage
+
+The input file should be a binary file formed by a concatenation of 2048-symbol
+frames using soft-symbols encoded as `float`'s. Positive symbols represent the
+bit 1 and negative symbols represent the bit 0. The output file is a binary file
+formed by a concatenation of 1024-bit frames using hard-symbols encoded as
+`uint8_t`'s. The output is unpacked (one bit per byte).
+
+The executable needs the path to the alist file describing the LDPC code to
+run. This can be found in the `alists/` directory.
+
+Run as:
+```bash
+./build/bin/aff3ct-ldpc-decoder alists/ccsds_ar4ja_r1_2_k1024.alist input_frames output_frames
+```
