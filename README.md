@@ -76,8 +76,8 @@ The compiled binary is in `build/bin/aff3ct-ldpc-decoder`.
 The input file should be a binary file formed by a concatenation of 2048-symbol
 frames using soft-symbols encoded as `float`'s. Positive symbols represent the
 bit 1 and negative symbols represent the bit 0. The output file is a binary file
-formed by a concatenation of 1024-bit frames using hard-symbols encoded as
-`uint8_t`'s. The output is unpacked (one bit per byte).
+formed by a concatenation of 1024-bit frames using hard-symbols. The output is
+packed as 8 bits per byte, so each output frame is stored as 128 bytes.
 
 The executable needs the path to the alist file describing the LDPC code to
 run. This can be found in the `alists/` directory.

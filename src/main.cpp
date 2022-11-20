@@ -30,7 +30,7 @@ struct buffers {
     std::vector<float> noisy_symbols;
     std::vector<float> LLRs;
     std::vector<int> dec_bits;
-    std::vector<uint8_t> dec_bits_u8;
+    std::vector<uint8_t> dec_bits_packed;
 };
 void init_buffers(const params& p, buffers& b);
 
@@ -87,10 +87,15 @@ int main(int argc, char** argv)
             ++failed_frames;
             continue;
         }
+        uint8_t x = 0;
         for (int j = 0; j < p.K; ++j) {
-            b.dec_bits_u8[j] = b.dec_bits[j];
+            x = (x << 1) | b.dec_bits[j];
+            if (j % 8 == 7) {
+                b.dec_bits_packed[j / 8] = x;
+            }
         }
-        if (fwrite(&b.dec_bits_u8[0], p.K, 1, output_frames) != 1) {
+        if (fwrite(&b.dec_bits_packed[0], b.dec_bits_packed.size(), 1, output_frames) !=
+            1) {
             std::cerr << "could not write to output file" << std::endl;
             return 1;
         }
@@ -130,5 +135,5 @@ void init_buffers(const params& p, buffers& b)
     b.noisy_symbols = std::vector<float>(p.N);
     b.LLRs = std::vector<float>(p.N);
     b.dec_bits = std::vector<int>(p.K);
-    b.dec_bits_u8 = std::vector<uint8_t>(p.K);
+    b.dec_bits_packed = std::vector<uint8_t>(p.K / 8);
 }
