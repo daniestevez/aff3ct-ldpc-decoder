@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set (EXECUTABLE_OUTPUT_PATH bin/)
 
 # Create the executable from sources
-add_executable(my_project ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+add_executable(aff3ct-ldpc-decoder ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 
 # Link with the "Threads library (required to link with AFF3CT after)
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
@@ -21,4 +21,4 @@ find_package(Threads REQUIRED)
 # Link with AFF3CT
 set (AFF3CT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 find_package(AFF3CT CONFIG 3.0.2 REQUIRED)
-target_link_libraries(my_project PRIVATE aff3ct::aff3ct-static-lib)
+target_link_libraries(aff3ct-ldpc-decoder PRIVATE aff3ct::aff3ct-static-lib)
