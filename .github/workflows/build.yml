@@ -1,0 +1,26 @@
+name: 'Build'
+on: [push, pull_request]
+
+jobs:
+  check-formatting:
+    name: Check C++ Formatting
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: DoozyX/clang-format-lint-action@v0.15
+      with:
+        source: 'src'
+        extensions: 'h,hpp,hxx,cpp,cc,c'
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Checkout AFF3CT
+      run: git submodule update --init --recursive
+    - name: Build AFF3CT
+      run: cd lib/aff3ct && mkdir build && cd build && cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native" -DAFF3CT_COMPILE_EXE="OFF" -DAFF3CT_COMPILE_STATIC_LIB="ON" -DAFF3CT_COMPILE_SHARED_LIB="ON" && make -j$(nproc)
+    - name: Copy cmake configuration
+      run: mkdir -p cmake/Modules && cp lib/aff3ct/build/lib/cmake/aff3ct-*/* cmake/Modules
+    - name: Build
+      run: mkdir build && cd build && cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native" && make -j$(nproc)
